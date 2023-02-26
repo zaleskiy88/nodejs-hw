@@ -1,18 +1,11 @@
-const {
-  listContacts,
-  getContactById,
-  deleteContactById,
-  addContact,
-  updateContact,
-} = require("../models/contacts");
-const contactSchema = require("../schemas/contacts");
+const { Contact, joiSchemas } = require("../models/contact");
 const { errorCreator } = require("../helpers/index");
 //  ===================================================//
 
 // Get all contacts
 const getAll = async (req, res, next) => {
   try {
-    const contacts = await listContacts();
+    const contacts = await Contact.find();
 
     res.status(200).json(contacts);
   } catch (error) {
@@ -24,7 +17,7 @@ const getAll = async (req, res, next) => {
 const getById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const contact = await getContactById(contactId);
+    const contact = await Contact.findById(contactId);
 
     if (!contact) {
       errorCreator(404, "Not found");
@@ -39,13 +32,13 @@ const getById = async (req, res, next) => {
 // Add new contact
 const addNew = async (req, res, next) => {
   try {
-    const { error } = contactSchema.validate(req.body);
+    const { error } = joiSchemas.addContactSchema.validate(req.body);
 
     if (error) {
       errorCreator(400, error.message);
     }
 
-    const newContact = await addContact(req.body);
+    const newContact = await Contact.create(req.body);
 
     res.status(201).json(newContact);
   } catch (error) {
@@ -57,7 +50,7 @@ const addNew = async (req, res, next) => {
 const removeById = async (req, res, next) => {
   try {
     const { contactId } = req.params;
-    const result = await deleteContactById(contactId);
+    const result = await Contact.findOneAndDelete({ _id: contactId });
 
     if (!result) {
       errorCreator(404, "Not found");
@@ -72,18 +65,19 @@ const removeById = async (req, res, next) => {
 // Update contact
 const updateById = async (req, res, next) => {
   try {
-    const { error } = contactSchema.validate(req.body);
+    const { error } = joiSchemas.addContactSchema.validate(req.body);
+
     const { contactId } = req.params;
 
-    if (Object.keys(req.body).length === 0) {
-      errorCreator(400, "Missing fields");
-    }
-
     if (error) {
-      errorCreator(404, error.message);
+      errorCreator(400, error.message);
     }
 
-    const updatedContact = await updateContact(contactId, req.body);
+    const updatedContact = await Contact.findByIdAndUpdate(
+      contactId,
+      req.body,
+      { returnDocument: "after" }
+    );
 
     if (updatedContact === null) {
       errorCreator(404, "Not found");
@@ -95,4 +89,36 @@ const updateById = async (req, res, next) => {
   }
 };
 
-module.exports = { getAll, getById, addNew, removeById, updateById };
+const updateStatusContact = async (req, res, next) => {
+  try {
+    const { error } = joiSchemas.toggleFavoriteSchema.validate(req.body);
+    const { contactId } = req.params;
+
+    if (error) {
+      errorCreator(400, error.message);
+    }
+
+    const updatedContact = await Contact.findByIdAndUpdate(
+      contactId,
+      req.body,
+      { returnDocument: "after" }
+    );
+
+    if (updatedContact === null) {
+      errorCreator(404, "Not found");
+    }
+
+    res.status(200).json(updatedContact);
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  getAll,
+  getById,
+  addNew,
+  removeById,
+  updateById,
+  updateStatusContact,
+};
