@@ -89,13 +89,14 @@ const updateById = async (req, res, next) => {
   }
 };
 
+// Update favorite status
 const updateStatusContact = async (req, res, next) => {
   try {
     const { error } = joiSchemas.toggleFavoriteSchema.validate(req.body);
     const { contactId } = req.params;
 
     if (error) {
-      errorCreator(400, error.message);
+      errorCreator(400, "missing field favorite");
     }
 
     const updatedContact = await Contact.findByIdAndUpdate(
