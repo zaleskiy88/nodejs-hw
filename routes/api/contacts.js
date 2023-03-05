@@ -1,5 +1,6 @@
 const express = require("express");
-const ctrl = require("../../controllers/contacts");
+const ctrl = require("../../controllers/index");
+const { isValidId } = require("../../middlewares/index");
 
 // =========================================================== //
 
@@ -9,15 +10,18 @@ const router = express.Router();
 router.get("/", ctrl.getAll);
 
 // Get by id
-router.get("/:contactId", ctrl.getById);
+router.get("/:contactId", isValidId, ctrl.getById);
 
 // Add new
 router.post("/", ctrl.addNew);
 
 // Remove
-router.delete("/:contactId", ctrl.removeById);
+router.delete("/:contactId", isValidId, ctrl.removeById);
 
 // Update
-router.put("/:contactId", ctrl.updateById);
+router.put("/:contactId", isValidId, ctrl.updateById);
+
+// Favorite handler
+router.patch("/:contactId/favorite", isValidId, ctrl.updateStatusContact);
 
 module.exports = router;
