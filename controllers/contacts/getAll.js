@@ -5,9 +5,9 @@ const { Contact } = contactSchemas;
 // Get all contacts
 const getAll = async (req, res, next) => {
   try {
-    const { _id: owner } = req.user;
+    const { _id } = req.user;
     // prettier-ignore
-    const contacts = await Contact.find({ owner }, "-createdAt -updatedAt")
+    const contacts = await Contact.find({ owner:_id }, "-createdAt -updatedAt")
       .populate("owner", "_id email subscription");
 
     res.status(200).json(contacts);
