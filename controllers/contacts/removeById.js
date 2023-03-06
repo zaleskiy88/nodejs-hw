@@ -1,6 +1,7 @@
-const { Contact } = require("../../models/index");
+const { contactSchemas } = require("../../models/index");
 const { errorCreator } = require("../../helpers/index");
 //  ===================================================//
+const { Contact } = contactSchemas;
 
 // Delete contact
 const removeById = async (req, res, next) => {
@@ -9,7 +10,7 @@ const removeById = async (req, res, next) => {
     const result = await Contact.findOneAndDelete({ _id: contactId });
 
     if (!result) {
-      errorCreator(404, "Not found");
+      throw errorCreator(404, "Not found");
     }
 
     res.status(200).json({ message: "contact deleted" });

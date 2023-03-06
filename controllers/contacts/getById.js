@@ -1,6 +1,7 @@
-const { Contact } = require("../../models/index");
+const { contactSchemas } = require("../../models/index");
 const { errorCreator } = require("../../helpers/index");
 //  ===================================================//
+const { Contact } = contactSchemas;
 
 // Get contact by id
 const getById = async (req, res, next) => {
@@ -9,7 +10,7 @@ const getById = async (req, res, next) => {
     const contact = await Contact.findById(contactId);
 
     if (!contact) {
-      errorCreator(404, "Not found");
+      throw errorCreator(404, "Not found");
     }
 
     res.status(200).json(contact);

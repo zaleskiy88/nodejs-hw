@@ -1,7 +1,7 @@
-const errorCreator = (err, message) => {
+const errorCreator = (errorCode, message) => {
   const error = new Error(message);
-  error.status = err;
-  throw error;
+  error.status = errorCode;
+  return error;
 };
 
 module.exports = errorCreator;

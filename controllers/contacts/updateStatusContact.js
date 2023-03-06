@@ -1,8 +1,7 @@
-// const { Contact, joiSchemas } = require("../../models/contact");
-const { Contact, joiSchemas } = require("../../models/index");
+const { contactSchemas } = require("../../models/index");
 const { errorCreator } = require("../../helpers/index");
 //  ===================================================//
-
+const { Contact, joiSchemas } = contactSchemas;
 // Update favorite status
 const updateStatusContact = async (req, res, next) => {
   try {
@@ -10,7 +9,7 @@ const updateStatusContact = async (req, res, next) => {
     const { contactId } = req.params;
 
     if (error) {
-      errorCreator(400, "missing field favorite");
+      throw errorCreator(400, "missing field favorite");
     }
 
     const updatedContact = await Contact.findByIdAndUpdate(
@@ -20,7 +19,7 @@ const updateStatusContact = async (req, res, next) => {
     );
 
     if (updatedContact === null) {
-      errorCreator(404, "Not found");
+      throw errorCreator(404, "Not found");
     }
 
     res.status(200).json(updatedContact);

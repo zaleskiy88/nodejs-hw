@@ -1,7 +1,8 @@
-const { Contact, joiSchemas } = require("../../models/index");
+const { contactSchemas } = require("../../models/index");
+require("../../models/index");
 const { errorCreator } = require("../../helpers/index");
 //  ===================================================//
-
+const { Contact, joiSchemas } = contactSchemas;
 // Update contact
 const updateById = async (req, res, next) => {
   try {
@@ -10,7 +11,7 @@ const updateById = async (req, res, next) => {
     const { contactId } = req.params;
 
     if (error) {
-      errorCreator(400, error.message);
+      throw errorCreator(400, error.message);
     }
 
     const updatedContact = await Contact.findByIdAndUpdate(
@@ -20,7 +21,7 @@ const updateById = async (req, res, next) => {
     );
 
     if (updatedContact === null) {
-      errorCreator(404, "Not found");
+      throw errorCreator(404, "Not found");
     }
 
     res.status(200).json(updatedContact);
