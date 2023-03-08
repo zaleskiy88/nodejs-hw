@@ -20,7 +20,7 @@ const authenticate = async (req, res, next) => {
     const user = await User.findById(id);
 
     // Checking for user's existence in DB and for the fresh token
-    if (!user || user.token !== token) {
+    if (!user || !token || user.token !== token) {
       next(errorCreator(401, "Not authorized"));
     }
 
