@@ -1,27 +1,29 @@
 const express = require("express");
-const ctrl = require("../../controllers/index");
-const { isValidId } = require("../../middlewares/index");
+const { contactsControllers: ctrl } = require("../../controllers/index");
+const { isValidId, authenticate } = require("../../middlewares/index");
 
 // =========================================================== //
 
 const router = express.Router();
 
 // List all contacts
-router.get("/", ctrl.getAll);
+router.get("/", authenticate, ctrl.getAll);
 
 // Get by id
-router.get("/:contactId", isValidId, ctrl.getById);
+router.get("/:contactId", authenticate, isValidId, ctrl.getById);
 
 // Add new
-router.post("/", ctrl.addNew);
+router.post("/", authenticate, ctrl.addNew);
 
 // Remove
-router.delete("/:contactId", isValidId, ctrl.removeById);
+router.delete("/:contactId", authenticate, isValidId, ctrl.removeById);
 
 // Update
-router.put("/:contactId", isValidId, ctrl.updateById);
+router.put("/:contactId", authenticate, isValidId, ctrl.updateById);
 
 // Favorite handler
-router.patch("/:contactId/favorite", isValidId, ctrl.updateStatusContact);
+// prettier-ignore
+router.patch( "/:contactId/favorite", authenticate, isValidId, ctrl.updateStatusContact
+);
 
 module.exports = router;
