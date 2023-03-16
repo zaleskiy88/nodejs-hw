@@ -1,6 +1,7 @@
 const { userSchemas } = require("../../models/index");
 const { errorCreator } = require("../../helpers/index");
 const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
 // ========================================================//
 
 // ================ User signup/registration===============//
@@ -21,10 +22,13 @@ const userSignup = async (req, res, next) => {
     if (user) {
       errorCreator(409, "Email in use");
     }
+    // Creating default avatar
+    const avatarURL = gravatar.url(email);
 
     const newUser = await User.create({
       ...req.body,
       password: await bcrypt.hash(password, 10), // Hashing password
+      avatarURL,
     });
 
     res.status(201).json({
