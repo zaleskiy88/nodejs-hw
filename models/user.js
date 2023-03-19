@@ -27,8 +27,20 @@ const userSchema = new Schema(
       type: String,
       default: null,
     },
+
     avatarURL: {
       type: String,
+    },
+
+    verified: {
+      type: Boolean,
+      default: false,
+    },
+
+    verificationToken: {
+      type: String,
+      default: "",
+      required: [true, "Token verification is required"],
     },
   },
   { timestamps: true, versionKey: false }
@@ -51,7 +63,15 @@ const loginUserSchema = Joi.object({
   email: Joi.string().min(3).email().required(),
 });
 
-const joiSchemas = { addUserSchema, loginUserSchema };
+const verificationEmailSchema = Joi.object({
+  email: Joi.string().email().required(),
+});
+
+const joiSchemas = {
+  addUserSchema,
+  loginUserSchema,
+  verificationEmailSchema,
+};
 // ==================================================//
 
 module.exports = { User, joiSchemas };
