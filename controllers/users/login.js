@@ -24,6 +24,10 @@ const userLogin = async (req, res, next) => {
       throw errorCreator(404, "Not found");
     }
 
+    if (!user.verified) {
+      throw errorCreator(401, "Email not verified");
+    }
+
     // Checking if password is correct
     const passwordCheck = await bcrypt.compare(password, user.password);
 

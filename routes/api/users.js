@@ -1,6 +1,7 @@
 const express = require("express");
 const { userControllers } = require("../../controllers/index");
 const { authenticate, uploadFile } = require("../../middlewares/index");
+
 // ============================================================== //
 
 const router = express.Router();
@@ -20,5 +21,11 @@ router.get("/current", authenticate, userControllers.getCurrentUser);
 // Update/change user's avatar
 // prettier-ignore
 router.patch("/avatars", authenticate, uploadFile.single("avatar"), userControllers.updateAvatar);
+
+// User's email verification
+router.get("/verify/:verificationToken", userControllers.verifyEmail);
+
+// Resend user's email verification
+router.post("/verify", userControllers.resendEmailVerification);
 
 module.exports = router;
